@@ -55,11 +55,25 @@ class Vector(object):
     def dot(self, v):
         return sum([x * y for x, y in zip(self.coordinates, v.coordinates)])
     
+    @staticmethod
+    def replace_if_within_tolerance(val, compare_with, tolerance=1e-10):
+        if abs(val - compare_with) < tolerance:
+            return compare_with
+        else:
+            return val 
+
     def angle_with(self, v, in_degrees=False):
         try:
             u1 = self.normalized()
+            #print("u1 {}".format(u1))
             u2 = v.normalized()
-            angle_in_radians = acos(u1.dot(u2))
+            #print("u2 {}".format(u2))
+            k = u1.dot(u2)
+            k = Vector.replace_if_within_tolerance(k, 1)
+            k = Vector.replace_if_within_tolerance(k, -1)
+            #print("k {}".format(k))
+            angle_in_radians = acos(k)
+            #print("angle_in_radians {}".format(angle_in_radians))
 
             if in_degrees:
                 degree_per_radian = 180.0/pi
@@ -71,6 +85,19 @@ class Vector(object):
                 raise Exception("Cannot compute an angle with the zero vector")
             else:
                 raise e
+    
+    def is_zero(self, tolerance=1e-10):
+        return self.magnitude() < tolerance
+
+    def is_orthogonal_to(self, v, tolerance=1e-10):
+        return abs(self.dot(v)) < tolerance
+
+    def is_parallel_to(self, v):
+        return (self.is_zero() or
+                v.is_zero() or
+                self.angle_with(v) == 0 or
+                self.angle_with(v) == pi)
+
     
 v = Vector([8.218, -9.341])
 w = Vector([-1.129, 2.111])
@@ -112,4 +139,22 @@ v = Vector([7.35, 0.221, 5.188])
 w = Vector([2.751, 8.259, 3.985])
 print(v.angle_with(w, in_degrees=True))
 
+v = Vector([-7.579, -7.88])
+w = Vector([22.737, 23.64])
+print("Is parallel: {}".format(v.is_parallel_to(w)))
+print("Is Orthogonal: {}".format(v.is_orthogonal_to(w)))
 
+v = Vector([-2.029, 9.97, 4.172])
+w = Vector([-9.231, -6.639, -7.245])
+print("Is parallel: {}".format(v.is_parallel_to(w)))
+print("Is Orthogonal: {}".format(v.is_orthogonal_to(w)))
+
+v = Vector([-2.328, -7.284, -1.214])
+w = Vector([-1.821, 1.072, -2.94])
+print("Is parallel: {}".format(v.is_parallel_to(w)))
+print("Is Orthogonal: {}".format(v.is_orthogonal_to(w)))
+
+v = Vector([2.118, 4.827])
+w = Vector([0, 0])
+print("Is parallel: {}".format(v.is_parallel_to(w)))
+print("Is Orthogonal: {}".format(v.is_orthogonal_to(w)))
