@@ -6,6 +6,8 @@ getcontext().prec = 30
 class Vector(object):
 
     CANNOT_NORMALIZE_ZERO_VECTOR_MSG = "Cannot normalize the zero vector"
+    NO_UNIQUE_PARALLEL_COMPONENT_MSG = "No unique parallel component"
+    NO_UNIQUE_ORTHOGONAL_COMPONENT_MSG = "No unique orthogonal component"
 
     def __init__(self, coordinates):
         try:
@@ -97,7 +99,44 @@ class Vector(object):
                 v.is_zero() or
                 self.angle_with(v) == 0 or
                 self.angle_with(v) == pi)
+    
+    def component_parallel_to(self, basis):
+        try:
+            u_b = basis.normalized()
+            weight = self.dot(u_b)
+            return u_b.times_scalar(weight)
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
+            else:
+                raise e
 
+    def component_orthogonal_to(self, basis):
+        try:
+            parallel_proj = self.component_parallel_to(basis)
+            return self.minus(parallel_proj)
+        except Exception as e:
+            if str(e) == self.NO_UNIQUE_PARALLEL_COMPONENT_MSG:
+                raise Exception(self.NO_UNIQUE_ORTHOGONAL_COMPONENT_MSG)
+            else:
+                raise e
+
+    def cross(self, v):
+        x_1, y_1, z_1 = self.coordinates
+        x_2, y_2, z_2 = v.coordinates
+
+        cross_product = [ y_1*z_2 - y_2*z_1,
+                          -(x_1*z_2 - x_2*z_1),
+                          x_1*y_2 - x_2*y_1
+                        ]
+        return Vector(cross_product)
+
+    def area_of_parallelogram_with(self, v):
+        cross_product = self.cross(v)
+        return cross_product.magnitude()
+    
+    def area_of_trainge_with(self, v):
+        return self.area_of_parallelogram_with(v)/2.0
     
 v = Vector([8.218, -9.341])
 w = Vector([-1.129, 2.111])
@@ -158,3 +197,31 @@ v = Vector([2.118, 4.827])
 w = Vector([0, 0])
 print("Is parallel: {}".format(v.is_parallel_to(w)))
 print("Is Orthogonal: {}".format(v.is_orthogonal_to(w)))
+
+v = Vector([3.039, 1.879])
+w = Vector([0.825, 2.036])
+print(v.component_parallel_to(w))
+
+v = Vector([-9.88, -3.264, -8.159])
+w = Vector([-2.155, -9.353, -9.473])
+print(v.component_orthogonal_to(w))
+
+v = Vector([3.009, -6.172, 3.692, -2.51])
+w = Vector([6.404, -9.144, 2.759, 8.718])
+vpar = v.component_parallel_to(w)
+vort = v.component_orthogonal_to(w)
+print("Parallel component: {}".format(vpar))
+print("Orthogonal component: {}".format(vort))
+
+v = Vector([8.462, 7.893, -8.187])
+w = Vector([6.984, -5.975, 4.778])
+print(v.cross(w))
+
+v = Vector([-8.987, -9.838, 5.031])
+w = Vector([-4.268, -1.861, -8.866])
+print(v.area_of_parallelogram_with(w))
+
+v = Vector([1.5, 9.547, 3.691])
+w = Vector([-6.007, 0.124, 5.772])
+print(v.area_of_trainge_with(w))
+
