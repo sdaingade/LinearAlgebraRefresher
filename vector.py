@@ -29,6 +29,12 @@ class Vector(object):
     def __eq__(self, v):
         return self.coordinates == v.coordinates
 
+    def __iter__(self):
+        return iter(self.coordinates)
+
+    def __getitem__(self,index):
+        return self.coordinates[index]
+
     def plus(self, v):
         new_coordinates = [x + y for x,y in zip(self.coordinates, v.coordinates)]
         return Vector(new_coordinates)
@@ -137,7 +143,9 @@ class Vector(object):
     
     def area_of_trainge_with(self, v):
         return self.area_of_parallelogram_with(v)/2.0
-    
+
+"""
+
 v = Vector([8.218, -9.341])
 w = Vector([-1.129, 2.111])
 print(v.plus(w))
@@ -225,3 +233,4 @@ v = Vector([1.5, 9.547, 3.691])
 w = Vector([-6.007, 0.124, 5.772])
 print(v.area_of_trainge_with(w))
 
+"""
