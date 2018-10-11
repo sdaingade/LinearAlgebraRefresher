@@ -89,6 +89,8 @@ class Plane(object):
 
     def __eq__(self, v):
 
+        #print("v: {}".format(v))
+
         if self.normal_vector.is_zero():
             if not v.normal_vector.is_zero():
                 return False
@@ -108,7 +110,6 @@ class Plane(object):
         n = self.normal_vector
         return basepoint_difference.is_orthogonal_to(n)
 
-
     def is_parallel_to(self, v):
         n1 = self.normal_vector
         n2 = v.normal_vector
@@ -126,7 +127,7 @@ class Plane(object):
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
-
+"""
 v = Plane([-0.412, 3.806, 0.728], -3.46)
 w = Plane([1.03, -9.515, -1.82], 8.65)
 print(v.is_parallel_to(w))
@@ -141,3 +142,4 @@ v = Plane([-7.926, 8.625, -7.212], -7.952)
 w = Plane([-2.642, 2.875, -2.404], -2.443)
 print(v.is_parallel_to(w))
 print(v == w)
+"""

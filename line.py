@@ -156,6 +156,7 @@ class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
 
+"""
 v = Line([4.046, 2.836], 1.21)
 w = Line([10.115, 7.09], 3.025)
 print(v.is_parallel_to(w))
@@ -173,3 +174,4 @@ w = Line([1.773, 8.343], 9.525)
 print(v.is_parallel_to(w))
 print(v==w)
 print(v.intersect_with(w))
+"""
